@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignatureBuilder</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+        
+        /* Range input styling */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            margin-top: -6px;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans selection:bg-blue-500 selection:text-white h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-20 shrink-0">
+        <div class="flex items-center space-x-3">
+            <div class="bg-blue-600 text-white p-2 rounded-lg shadow-lg shadow-blue-900/20">
+                <i data-lucide="mail" width="20" height="20"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-slate-100 tracking-tight">SignatureBuilder</h1>
+                <p class="text-xs text-slate-400">Professional Email Signatures</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div id="copy-success" class="hidden text-green-400 text-sm font-medium items-center bg-green-900/20 px-3 py-1 rounded-full border border-green-900/50 transition-all">
+                <i data-lucide="check" width="14" height="14" class="mr-1.5"></i> Copied!
+            </div>
+            <button id="btn-copy" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg font-medium transition-all shadow-lg shadow-blue-900/20 hover:shadow-blue-900/40 active:scale-95 border border-blue-500">
+                <i data-lucide="copy" width="18" height="18"></i>
+                <span id="btn-copy-text">Copy Signature</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside class="w-[400px] bg-slate-900 border-r border-slate-800 overflow-y-auto p-6 shrink-0">
+            <div class="space-y-10">
+                
+                <!-- Personal Info -->
+                <section>
+                    <h2 class="text-xs uppercase tracking-wider text-blue-400 font-bold mb-5 flex items-center border-b border-slate-800 pb-2">
+                        <i data-lucide="user" width="14" height="14" class="mr-2"></i> Personal Information
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="form-group" data-field="fullName"></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group" data-field="jobTitle"></div>
+                            <div class="form-group" data-field="company"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Contact Info -->
+                <section>
+                    <h2 class="text-xs uppercase tracking-wider text-blue-400 font-bold mb-5 flex items-center border-b border-slate-800 pb-2">
+                        <i data-lucide="phone" width="14" height="14" class="mr-2"></i> Contact Details
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group" data-field="email" data-icon="mail"></div>
+                            <div class="form-group" data-field="phone" data-icon="phone"></div>
+                        </div>
+                        <div class="form-group" data-field="website" data-icon="globe"></div>
+                        <div class="form-group" data-field="address" data-icon="map-pin"></div>
+                    </div>
+                </section>
+
+                <!-- Social Media -->
+                <section>
+                    <h2 class="text-xs uppercase tracking-wider text-blue-400 font-bold mb-5 flex items-center border-b border-slate-800 pb-2">
+                        <i data-lucide="globe" width="14" height="14" class="mr-2"></i> Social Media
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="form-group" data-field="linkedin" data-icon="linkedin" data-placeholder="linkedin.com/in/..."></div>
+                        <div class="form-group" data-field="twitter" data-icon="twitter" data-placeholder="twitter.com/..."></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-group" data-field="instagram" data-icon="instagram" data-placeholder="instagram.com/..."></div>
+                            <div class="form-group" data-field="facebook" data-icon="facebook" data-placeholder="facebook.com/..."></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Cover Letter -->
+                <section>
+                    <h2 class="text-xs uppercase tracking-wider text-blue-400 font-bold mb-5 flex items-center border-b border-slate-800 pb-2">
+                        <i data-lucide="file-text" width="14" height="14" class="mr-2"></i> Cover Letter
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Letter Content</label>
+                            <textarea id="input-coverLetter" rows="8" class="w-full bg-slate-800 border border-slate-700 text-gray-100 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-600 resize-none"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Styling -->
+                <section>
+                    <h2 class="text-xs uppercase tracking-wider text-blue-400 font-bold mb-5 flex items-center border-b border-slate-800 pb-2">
+                        <i data-lucide="palette" width="14" height="14" class="mr-2"></i> Style & Design
+                    </h2>
+                    
+                    <div class="space-y-6">
+                        <!-- Colors -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase mb-3">Accent Color</label>
+                            <div class="flex flex-wrap gap-2" id="color-picker-container">
+                                <!-- Colors injected by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Font Family -->
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-400 uppercase mb-3">Font Family</label>
+                            <select id="select-font" class="w-full bg-slate-800 border border-slate-700 text-gray-200 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="Arial, Helvetica, sans-serif">Arial (Sans)</option>
+                                <option value="Verdana, Geneva, sans-serif">Verdana (Sans)</option>
+                                <option value="Georgia, serif">Georgia (Serif)</option>
+                                <option value='"Times New Roman", Times, serif'>Times New Roman (Serif)</option>
+                                <option value='"Courier New", Courier, monospace'>Courier New (Mono)</option>
+                            </select>
+                        </div>
+
+                        <!-- Font Size & Avatar Shape -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase mb-3">Font Size</label>
+                                <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700" id="font-size-toggles">
+                                    <button data-value="small" class="toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize text-slate-400 hover:text-slate-200">S</button>
+                                    <button data-value="medium" class="toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize bg-blue-600 text-white shadow-sm">M</button>
+                                    <button data-value="large" class="toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize text-slate-400 hover:text-slate-200">L</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-gray-400 uppercase mb-3">Avatar Shape</label>
+                                <div class="flex bg-slate-800 p-1 rounded-lg border border-slate-700" id="avatar-shape-toggles">
+                                    <button data-value="square" class="toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize text-slate-400 hover:text-slate-200">Sq</button>
+                                    <button data-value="rounded" class="toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize text-slate-400 hover:text-slate-200">Rd</button>
+                                    <button data-value="circle" class="toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize bg-blue-600 text-white shadow-sm">Ci</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Avatar Url -->
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="text-xs font-semibold text-gray-400 uppercase">Avatar Source</label>
+                                <button id="btn-toggle-avatar" class="text-xs flex items-center text-blue-400">
+                                    <span class="mr-1">Shown</span> <i data-lucide="eye" width="12" height="12"></i>
+                                </button>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" id="input-avatarUrl" class="w-full bg-slate-800 border border-slate-700 text-gray-200 px-3 py-2 rounded-md text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://...">
+                                <button id="btn-reset-avatar" class="p-2 bg-slate-700 rounded hover:bg-slate-600 text-gray-300 transition-colors" title="Reset to Initials">
+                                    <i data-lucide="refresh-cw" width="16" height="16"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </aside>
+
+        <!-- Preview Main Area -->
+        <main class="flex-1 bg-slate-950 flex flex-col items-center justify-start pt-8 px-8 overflow-y-auto">
+            <div class="w-full max-w-4xl">
+                
+                <!-- View Mode Switcher -->
+                <div class="flex justify-center mb-6">
+                    <div class="bg-slate-900 p-1 rounded-lg border border-slate-800 flex items-center" id="view-mode-toggles">
+                        <button data-mode="signature" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center bg-blue-600 text-white">
+                            Signature Only
+                        </button>
+                        <button data-mode="email" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center text-gray-400 hover:text-white">
+                            Full Email + Cover Letter
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Layout Switcher -->
+                <div class="flex flex-wrap justify-center mb-8 bg-slate-900 p-2 rounded-xl border border-slate-800 mx-auto w-full max-w-3xl gap-1" id="layout-toggles">
+                    <!-- Buttons injected by JS -->
+                </div>
+
+                <!-- The Preview Card -->
+                <div class="bg-white p-12 rounded-xl shadow-2xl min-h-[350px] flex items-center justify-center relative overflow-hidden ring-8 ring-slate-900">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-20"></div>
+                    
+                    <!-- Content to be copied -->
+                    <div id="preview-render-target" class="select-text w-full max-w-2xl text-left" style="color: #333;">
+                        <!-- Rendered content goes here -->
+                    </div>
+
+                    <div class="absolute bottom-3 left-0 right-0 text-center">
+                        <p id="preview-label" class="text-[10px] uppercase tracking-widest text-slate-300 flex items-center justify-center font-semibold">
+                            Signature Preview
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Setup Guide -->
+                <div class="mt-12 mb-10 text-center max-w-2xl mx-auto">
+                    <div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl">
+                        <h3 class="text-sm font-bold text-slate-200 mb-3 uppercase tracking-wider flex items-center justify-center">
+                            <i data-lucide="alert-circle" width="16" height="16" class="mr-2 text-blue-400"></i>
+                            Quick Setup Guide
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800/50">
+                                <div class="text-blue-500 font-bold mb-1">Step 1</div>
+                                <div class="text-xs text-slate-400">Customize details in the sidebar. Use the <strong>Cover Letter</strong> tab to draft your message.</div>
+                            </div>
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800/50">
+                                <div class="text-blue-500 font-bold mb-1">Step 2</div>
+                                <div class="text-xs text-slate-400">Switch modes above to preview just the signature or the full email.</div>
+                            </div>
+                            <div class="bg-slate-900 p-4 rounded-lg border border-slate-800/50">
+                                <div class="text-blue-500 font-bold mb-1">Step 3</div>
+                                <div class="text-xs text-slate-400">Click <strong>Copy</strong>. If in Full Email mode, paste into a new email composition directly!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- State Management ---
+        const state = {
+            formData: {
+                fullName: 'Alex Morgan',
+                jobTitle: 'Senior Product Designer',
+                company: 'Creative Solutions Inc.',
+                email: 'alex.morgan@example.com',
+                phone: '+1 (555) 123-4567',
+                website: 'www.creativesolutions.com',
+                address: '123 Innovation Dr, Tech City',
+                avatarUrl: 'https://ui-avatars.com/api/?name=Alex+Morgan&background=0D8ABC&color=fff&size=128',
+                linkedin: 'linkedin.com/in/alexmorgan',
+                twitter: 'twitter.com/alexmorgan',
+                instagram: '',
+                facebook: '',
+            },
+            coverLetter: "Dear Hiring Manager,\n\nI am writing to express my enthusiastic interest in the open position at your company. With my background in this field and passion for innovation, I am confident in my ability to contribute effectively to your team.\n\nI look forward to the possibility of discussing this exciting opportunity with you.\n\nSincerely,",
+            visibleFields: {
+                fullName: true,
+                jobTitle: true,
+                company: true,
+                email: true,
+                phone: true,
+                website: true,
+                address: true,
+                avatar: true,
+                linkedin: true,
+                twitter: true,
+                instagram: true,
+                facebook: true,
+            },
+            settings: {
+                themeColor: '#3b82f6',
+                layout: 'modern',
+                avatarShape: 'circle',
+                fontFamily: 'Arial, Helvetica, sans-serif',
+                fontSize: 'medium',
+            },
+            viewMode: 'signature' // 'signature' | 'email'
+        };
+
+        const colors = [
+            '#3b82f6', '#ef4444', '#22c55e', '#a855f7', 
+            '#f97316', '#0f172a', '#ec4899', '#000000'
+        ];
+
+        const layoutOptions = [
+            'classic', 'modern', 'horizontal', 'elegant', 
+            'compact', 'sidebar', 'banner'
+        ];
+
+        // --- Render Logic Helpers ---
+
+        const getBaseStyles = () => {
+            const sizeMap = { small: '12px', medium: '14px', large: '16px' };
+            const nameSizeMap = { small: '16px', medium: '18px', large: '22px' };
+            
+            return {
+                table: `font-family: ${state.settings.fontFamily}; font-size: ${sizeMap[state.settings.fontSize]}; line-height: 1.4; color: #333333; border-collapse: collapse;`,
+                name: `font-size: ${nameSizeMap[state.settings.fontSize]}; font-weight: bold; color: #111111; margin: 0;`,
+                jobTitle: `color: ${state.settings.themeColor}; font-weight: 600;`,
+                company: `color: #666666;`,
+                link: `color: ${state.settings.themeColor}; text-decoration: none;`,
+                iconLink: `text-decoration: none; color: ${state.settings.themeColor}; font-size: 11px; margin-right: 10px; font-weight: bold; text-transform: uppercase;`,
+                avatar: `width: 90px; height: 90px; object-fit: cover; display: block; border-radius: ${state.settings.avatarShape === 'circle' ? '50%' : state.settings.avatarShape === 'rounded' ? '10px' : '0'};`
+            };
+        };
+
+        const getSocialLinksHTML = () => {
+            const platforms = [
+                { k: 'linkedin', l: 'LN' }, { k: 'twitter', l: 'TW' },
+                { k: 'facebook', l: 'FB' }, { k: 'instagram', l: 'IG' }
+            ];
+            
+            const links = platforms
+                .filter(p => state.visibleFields[p.k] && state.formData[p.k])
+                .map(p => {
+                    const url = state.formData[p.k].replace(/^https?:\/\//, '');
+                    return `<span><a href="https://${url}" style="${getBaseStyles().iconLink}">${p.l}</a></span>`;
+                });
+
+            if (links.length === 0) return '';
+            return `<div style="margin-top: 8px;">${links.join('')}</div>`;
+        };
+
+        // --- Layout Generators (Ported from React) ---
+
+        const layouts = {
+            classic: () => {
+                const s = getBaseStyles();
+                return `
+                <table cellpadding="0" cellspacing="0" style="${s.table}">
+                    <tbody>
+                        <tr>
+                            ${state.visibleFields.avatar ? `
+                            <td style="padding-right: 20px; vertical-align: top;">
+                                <img src="${state.formData.avatarUrl}" alt="Avatar" style="${s.avatar}" crossorigin="anonymous" />
+                            </td>` : ''}
+                            <td style="vertical-align: top; ${state.visibleFields.avatar ? `border-left: 2px solid ${state.settings.themeColor}; padding-left: 20px;` : ''}">
+                                ${state.visibleFields.fullName ? `<div style="${s.name}">${state.formData.fullName}</div>` : ''}
+                                <div style="font-size: 13px; margin: 4px 0 8px 0;">
+                                    ${state.visibleFields.jobTitle ? `<span style="${s.jobTitle}">${state.formData.jobTitle}</span>` : ''}
+                                    ${state.visibleFields.jobTitle && state.visibleFields.company ? `<span style="color: #ccc"> | </span>` : ''}
+                                    ${state.visibleFields.company ? `<span style="${s.company}">${state.formData.company}</span>` : ''}
+                                </div>
+                                <table cellpadding="0" cellspacing="0" style="font-size: 12px;">
+                                    <tbody>
+                                        ${state.visibleFields.email && state.formData.email ? `<tr><td style="padding-bottom: 2px;"><a href="mailto:${state.formData.email}" style="${s.link}; color: #555;">${state.formData.email}</a></td></tr>` : ''}
+                                        ${state.visibleFields.phone && state.formData.phone ? `<tr><td style="padding-bottom: 2px;"><a href="tel:${state.formData.phone}" style="${s.link}; color: #555;">${state.formData.phone}</a></td></tr>` : ''}
+                                        ${state.visibleFields.website && state.formData.website ? `<tr><td style="padding-bottom: 2px;"><a href="https://${state.formData.website}" style="${s.link}; color: #555;">${state.formData.website}</a></td></tr>` : ''}
+                                        ${state.visibleFields.address && state.formData.address ? `<tr><td style="color: #777; padding-top: 2px;">${state.formData.address}</td></tr>` : ''}
+                                    </tbody>
+                                </table>
+                                ${getSocialLinksHTML()}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>`;
+            },
+            modern: () => {
+                const s = getBaseStyles();
+                return `
+                <table cellpadding="0" cellspacing="0" style="${s.table}">
+                    <tbody>
+                        <tr>
+                            <td style="vertical-align: top; width: 4px; background-color: ${state.settings.themeColor}; border-radius: 4px;"></td>
+                            <td style="padding-left: 16px; vertical-align: top;">
+                                ${state.visibleFields.fullName ? `<div style="${s.name}; color: ${state.settings.themeColor}">${state.formData.fullName}</div>` : ''}
+                                <div style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: #111; letter-spacing: 0.5px; margin-bottom: 8px;">
+                                    ${state.visibleFields.jobTitle ? `<span>${state.formData.jobTitle}</span>` : ''}
+                                    ${state.visibleFields.company ? `<span style="font-weight: normal; color: #666"> at ${state.formData.company}</span>` : ''}
+                                </div>
+                                <table cellpadding="0" cellspacing="0" style="font-size: 12px; color: #444;">
+                                    <tbody>
+                                        ${state.visibleFields.phone && state.formData.phone ? `<tr><td style="padding-right: 8px; color: ${state.settings.themeColor}">P</td><td><a href="tel:${state.formData.phone}" style="text-decoration: none; color: #444;">${state.formData.phone}</a></td></tr>` : ''}
+                                        ${state.visibleFields.email && state.formData.email ? `<tr><td style="padding-right: 8px; color: ${state.settings.themeColor}">E</td><td><a href="mailto:${state.formData.email}" style="text-decoration: none; color: #444;">${state.formData.email}</a></td></tr>` : ''}
+                                        ${state.visibleFields.website && state.formData.website ? `<tr><td style="padding-right: 8px; color: ${state.settings.themeColor}">W</td><td><a href="https://${state.formData.website}" style="text-decoration: none; color: #444;">${state.formData.website}</a></td></tr>` : ''}
+                                    </tbody>
+                                </table>
+                                ${state.visibleFields.address && state.formData.address ? `<div style="font-size: 11px; color: #888; margin-top: 6px;">${state.formData.address}</div>` : ''}
+                                ${getSocialLinksHTML()}
+                            </td>
+                            ${state.visibleFields.avatar ? `<td style="padding-left: 20px; vertical-align: top;"><img src="${state.formData.avatarUrl}" alt="Me" style="${s.avatar}; width: 70px; height: 70px;" /></td>` : ''}
+                        </tr>
+                    </tbody>
+                </table>`;
+            },
+            horizontal: () => {
+                const s = getBaseStyles();
+                return `
+                <div style="font-family: ${state.settings.fontFamily}; font-size: 13px; color: #333;">
+                    <table cellpadding="0" cellspacing="0">
+                        <tbody>
+                            <tr>
+                                ${state.visibleFields.avatar ? `<td style="padding-right: 15px; vertical-align: middle;"><img src="${state.formData.avatarUrl}" style="${s.avatar}; width: 60px; height: 60px;" alt="Avatar"/></td>` : ''}
+                                <td style="vertical-align: middle;">
+                                    ${state.visibleFields.fullName ? `<span style="font-weight: bold; font-size: 16px; color: #000;">${state.formData.fullName}</span><br/>` : ''}
+                                    ${state.visibleFields.jobTitle ? `<span style="color: ${state.settings.themeColor}; font-weight: 600;">${state.formData.jobTitle}</span>` : ''}
+                                    ${state.visibleFields.company ? `<span style="color: #666;">, ${state.formData.company}</span>` : ''}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 10px; border-top: 1px solid #ddd; padding-top: 8px; font-size: 12px; line-height: 1.6;">
+                        ${state.visibleFields.phone && state.formData.phone ? `<span style="margin-right: 12px;">📞 ${state.formData.phone}</span>` : ''}
+                        ${state.visibleFields.email && state.formData.email ? `<span style="margin-right: 12px;">✉️ ${state.formData.email}</span>` : ''}
+                        ${state.visibleFields.website && state.formData.website ? `<span style="margin-right: 12px;">🌐 ${state.formData.website}</span>` : ''}
+                        ${state.visibleFields.address && state.formData.address ? `<span>📍 ${state.formData.address}</span>` : ''}
+                    </div>
+                    ${getSocialLinksHTML()}
+                </div>`;
+            },
+            elegant: () => {
+                const s = getBaseStyles();
+                return `
+                <div style="text-align: center; font-family: ${state.settings.fontFamily};">
+                    ${state.visibleFields.avatar ? `<img src="${state.formData.avatarUrl}" style="${s.avatar}; margin: 0 auto 10px auto;" alt="Avatar" />` : ''}
+                    ${state.visibleFields.fullName ? `<div style="font-size: 20px; letter-spacing: 2px; text-transform: uppercase; color: #222;">${state.formData.fullName}</div>` : ''}
+                    <div style="border-bottom: 1px solid ${state.settings.themeColor}; width: 50px; margin: 8px auto;"></div>
+                    ${state.visibleFields.jobTitle ? `<div style="font-style: italic; color: #555; margin-bottom: 2px;">${state.formData.jobTitle}</div>` : ''}
+                    ${state.visibleFields.company ? `<div style="font-weight: bold; font-size: 12px; color: #000; margin-bottom: 10px;">${state.formData.company}</div>` : ''}
+                    <div style="font-size: 12px; color: #666;">
+                        ${state.visibleFields.email && state.formData.email ? `<a href="mailto:${state.formData.email}" style="color: #666; text-decoration: none; margin: 0 5px;">${state.formData.email}</a>` : ''}
+                        ${state.visibleFields.phone && state.formData.phone ? `<span style="margin: 0 5px;">• ${state.formData.phone}</span>` : ''}
+                    </div>
+                    ${getSocialLinksHTML()}
+                </div>`;
+            },
+            compact: () => {
+                return `
+                <div style="font-family: ${state.settings.fontFamily}; font-size: 12px; border-left: 3px solid ${state.settings.themeColor}; padding-left: 10px;">
+                    ${state.visibleFields.fullName ? `<span style="font-weight: bold; color: #000;">${state.formData.fullName}</span>` : ''} 
+                    ${(state.visibleFields.jobTitle || state.visibleFields.company) ? `<span> — </span>` : ''}
+                    ${state.visibleFields.jobTitle ? `<span style="color: #555;">${state.formData.jobTitle}</span>` : ''}
+                    ${state.visibleFields.company ? `<span style="color: #888;"> @ ${state.formData.company}</span>` : ''}
+                    <div style="margin-top: 4px; color: ${state.settings.themeColor};">
+                        ${state.visibleFields.email && state.formData.email ? `<a href="mailto:${state.formData.email}" style="text-decoration: none; color: ${state.settings.themeColor}; margin-right: 10px;">${state.formData.email}</a>` : ''}
+                        ${state.visibleFields.phone && state.formData.phone ? `<a href="tel:${state.formData.phone}" style="text-decoration: none; color: ${state.settings.themeColor}; margin-right: 10px;">${state.formData.phone}</a>` : ''}
+                        ${state.visibleFields.website && state.formData.website ? `<a href="https://${state.formData.website}" style="text-decoration: none; color: ${state.settings.themeColor};">${state.formData.website}</a>` : ''}
+                    </div>
+                    ${getSocialLinksHTML()}
+                </div>`;
+            },
+            sidebar: () => {
+                const s = getBaseStyles();
+                return `
+                <table cellpadding="0" cellspacing="0" style="${s.table}; min-width: 400px;">
+                    <tbody>
+                        <tr>
+                            <td style="background-color: ${state.settings.themeColor}; padding: 20px; vertical-align: top; width: 140px; text-align: center; border-top-left-radius: 8px; border-bottom-left-radius: 8px;">
+                                ${state.visibleFields.avatar ? `<img src="${state.formData.avatarUrl}" alt="Avatar" style="width: 80px; height: 80px; border-radius: ${state.settings.avatarShape === 'circle' ? '50%' : '4px'}; border: 3px solid white; margin-bottom: 10px; object-fit: cover; display: inline-block;" />` : ''}
+                                ${state.visibleFields.fullName ? `<div style="color: #ffffff; font-weight: bold; font-size: 16px; line-height: 1.2;">${state.formData.fullName}</div>` : ''}
+                                ${state.visibleFields.jobTitle ? `<div style="color: rgba(255,255,255,0.9); font-size: 12px; margin-top: 4px;">${state.formData.jobTitle}</div>` : ''}
+                            </td>
+                            <td style="padding: 20px; vertical-align: top; background-color: #f8f9fa; border-top-right-radius: 8px; border-bottom-right-radius: 8px; width: 260px;">
+                                ${state.visibleFields.company ? `<div style="font-weight: bold; font-size: 14px; color: #333; margin-bottom: 12px; border-bottom: 1px solid #ddd; padding-bottom: 8px;">${state.formData.company}</div>` : ''}
+                                <table cellpadding="0" cellspacing="0" style="font-size: 12px; color: #555;">
+                                    <tbody>
+                                        ${state.visibleFields.email && state.formData.email ? `<tr><td style="padding-bottom: 6px; padding-right: 8px;">✉️</td><td style="padding-bottom: 6px;"><a href="mailto:${state.formData.email}" style="text-decoration:none; color:#555;">${state.formData.email}</a></td></tr>` : ''}
+                                        ${state.visibleFields.phone && state.formData.phone ? `<tr><td style="padding-bottom: 6px; padding-right: 8px;">📞</td><td style="padding-bottom: 6px;"><a href="tel:${state.formData.phone}" style="text-decoration:none; color:#555;">${state.formData.phone}</a></td></tr>` : ''}
+                                        ${state.visibleFields.website && state.formData.website ? `<tr><td style="padding-bottom: 6px; padding-right: 8px;">🌐</td><td style="padding-bottom: 6px;"><a href="https://${state.formData.website}" style="text-decoration:none; color:#555;">${state.formData.website}</a></td></tr>` : ''}
+                                        ${state.visibleFields.address && state.formData.address ? `<tr><td style="padding-bottom: 6px; padding-right: 8px;">📍</td><td style="padding-bottom: 6px;">${state.formData.address}</td></tr>` : ''}
+                                    </tbody>
+                                </table>
+                                ${getSocialLinksHTML()}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>`;
+            },
+            banner: () => {
+                return `
+                <div style="font-family: ${state.settings.fontFamily}; width: 100%; max-width: 500px;">
+                    <div style="background-color: ${state.settings.themeColor}; padding: 16px 20px; border-top-left-radius: 6px; border-top-right-radius: 6px; color: white;">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                            <tbody>
+                                <tr>
+                                    ${state.visibleFields.avatar ? `<td style="width: 60px; padding-right: 15px; vertical-align: middle;"><img src="${state.formData.avatarUrl}" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; object-fit: cover;" alt="Avatar"/></td>` : ''}
+                                    <td style="vertical-align: middle;">
+                                        ${state.visibleFields.fullName ? `<div style="font-size: 18px; font-weight: bold; color: white;">${state.formData.fullName}</div>` : ''}
+                                        ${state.visibleFields.jobTitle ? `<div style="font-size: 13px; opacity: 0.9; color: white;">${state.formData.jobTitle}</div>` : ''}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="border: 1px solid ${state.settings.themeColor}; border-top: none; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; padding: 16px 20px; background-color: white;">
+                        ${state.visibleFields.company ? `<div style="color: #333; font-weight: bold; font-size: 14px; margin-bottom: 10px;">${state.formData.company}</div>` : ''}
+                        <div style="font-size: 12px; color: #555; line-height: 1.8;">
+                            ${state.visibleFields.email && state.formData.email ? `<div><span style="color: ${state.settings.themeColor}; font-weight: bold; width: 20px; display: inline-block;">E:</span> <a href="mailto:${state.formData.email}" style="text-decoration:none; color:#555;">${state.formData.email}</a></div>` : ''}
+                            ${state.visibleFields.phone && state.formData.phone ? `<div><span style="color: ${state.settings.themeColor}; font-weight: bold; width: 20px; display: inline-block;">P:</span> <a href="tel:${state.formData.phone}" style="text-decoration:none; color:#555;">${state.formData.phone}</a></div>` : ''}
+                            ${state.visibleFields.website && state.formData.website ? `<div><span style="color: ${state.settings.themeColor}; font-weight: bold; width: 20px; display: inline-block;">W:</span> <a href="https://${state.formData.website}" style="text-decoration:none; color:#555;">${state.formData.website}</a></div>` : ''}
+                        </div>
+                        ${getSocialLinksHTML()}
+                    </div>
+                </div>`;
+            }
+        };
+
+        // --- Render Main ---
+        
+        function render() {
+            const container = document.getElementById('preview-render-target');
+            const signatureHTML = layouts[state.settings.layout]();
+
+            if (state.viewMode === 'email') {
+                const sizeMap = { small: '12px', medium: '14px', large: '16px' };
+                container.innerHTML = `
+                    <div style="font-family: ${state.settings.fontFamily}; color: #333;">
+                        <div style="white-space: pre-wrap; margin-bottom: 32px; font-size: ${sizeMap[state.settings.fontSize]}; line-height: 1.6;">${state.coverLetter}</div>
+                        ${signatureHTML}
+                    </div>
+                `;
+            } else {
+                container.innerHTML = signatureHTML;
+            }
+
+            // Update UI elements to reflect state
+            updateUIHelpers();
+        }
+
+        function updateUIHelpers() {
+            // Update eye icons
+            document.querySelectorAll('.visibility-btn').forEach(btn => {
+                const field = btn.dataset.field;
+                const isVisible = state.visibleFields[field];
+                btn.className = `visibility-btn text-gray-500 hover:text-white transition-colors ${!isVisible ? 'text-red-400' : ''}`;
+                btn.innerHTML = `<i data-lucide="${isVisible ? 'eye' : 'eye-off'}" width="14" height="14"></i>`;
+                if (!isVisible) {
+                    document.getElementById(`input-${field}`).parentElement.classList.add('opacity-50');
+                } else {
+                    document.getElementById(`input-${field}`).parentElement.classList.remove('opacity-50');
+                }
+            });
+
+            // Update layout buttons
+            document.querySelectorAll('#layout-toggles button').forEach(btn => {
+                const layout = btn.dataset.layout;
+                if (layout === state.settings.layout) {
+                    btn.className = 'px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow-lg';
+                } else {
+                    btn.className = 'px-3 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white hover:bg-slate-800';
+                }
+            });
+
+            // Update font size toggles
+            document.querySelectorAll('#font-size-toggles button').forEach(btn => {
+                const val = btn.dataset.value;
+                if (val === state.settings.fontSize) {
+                    btn.className = 'toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize bg-blue-600 text-white shadow-sm';
+                } else {
+                    btn.className = 'toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize text-slate-400 hover:text-slate-200';
+                }
+            });
+
+            // Update avatar shape toggles
+            document.querySelectorAll('#avatar-shape-toggles button').forEach(btn => {
+                const val = btn.dataset.value;
+                if (val === state.settings.avatarShape) {
+                    btn.className = 'toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize bg-blue-600 text-white shadow-sm';
+                } else {
+                    btn.className = 'toggle-btn flex-1 py-1.5 text-xs font-medium rounded capitalize text-slate-400 hover:text-slate-200';
+                }
+            });
+
+            // Update colors
+            document.querySelectorAll('#color-picker-container button').forEach(btn => {
+                const color = btn.dataset.color;
+                if (color === state.settings.themeColor) {
+                    btn.classList.add('border-white', 'scale-110', 'shadow-lg');
+                    btn.classList.remove('border-transparent');
+                } else {
+                    btn.classList.remove('border-white', 'scale-110', 'shadow-lg');
+                    btn.classList.add('border-transparent');
+                }
+            });
+            
+            // View Mode
+            document.querySelectorAll('#view-mode-toggles button').forEach(btn => {
+                const mode = btn.dataset.mode;
+                if (mode === state.viewMode) {
+                    btn.className = 'px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center bg-blue-600 text-white';
+                } else {
+                    btn.className = 'px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center text-gray-400 hover:text-white';
+                }
+            });
+
+            // Button Text
+            document.getElementById('btn-copy-text').textContent = state.viewMode === 'email' ? 'Copy Full Email' : 'Copy Signature';
+            document.getElementById('preview-label').textContent = state.viewMode === 'email' ? 'Full Email Preview' : 'Signature Preview';
+
+            // Special Avatar Toggle
+            const btnToggleAvatar = document.getElementById('btn-toggle-avatar');
+            btnToggleAvatar.className = `text-xs flex items-center ${state.visibleFields.avatar ? 'text-blue-400' : 'text-gray-500'}`;
+            btnToggleAvatar.innerHTML = `<span class="mr-1">${state.visibleFields.avatar ? 'Shown' : 'Hidden'}</span> <i data-lucide="${state.visibleFields.avatar ? 'eye' : 'eye-off'}" width="12" height="12"></i>`;
+
+            // Refresh icons
+            lucide.createIcons();
+        }
+
+        // --- Initialization & Event Binding ---
+
+        function init() {
+            // Generate Color Buttons
+            const colorContainer = document.getElementById('color-picker-container');
+            colors.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = `w-8 h-8 rounded-full border-2 transition-all border-transparent hover:scale-105`;
+                btn.style.backgroundColor = c;
+                btn.dataset.color = c;
+                btn.onclick = () => {
+                    state.settings.themeColor = c;
+                    render();
+                };
+                colorContainer.appendChild(btn);
+            });
+            // Custom Color Input
+            const customColorWrapper = document.createElement('div');
+            customColorWrapper.className = "relative w-8 h-8 rounded-full overflow-hidden border-2 border-slate-600 hover:border-slate-400 transition-colors";
+            const customColorInput = document.createElement('input');
+            customColorInput.type = 'color';
+            customColorInput.className = "absolute -top-2 -left-2 w-12 h-12 cursor-pointer p-0 border-0";
+            customColorInput.oninput = (e) => {
+                state.settings.themeColor = e.target.value;
+                render();
+            };
+            customColorWrapper.appendChild(customColorInput);
+            colorContainer.appendChild(customColorWrapper);
+
+            // Generate Input Fields
+            document.querySelectorAll('.form-group').forEach(group => {
+                const field = group.dataset.field;
+                const icon = group.dataset.icon;
+                const placeholder = group.dataset.placeholder || '';
+                
+                // Label handling
+                let label = field.replace(/([A-Z])/g, ' $1').trim();
+                label = label.charAt(0).toUpperCase() + label.slice(1);
+
+                group.innerHTML = `
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center">
+                            ${icon ? `<i data-lucide="${icon}" width="12" height="12" class="mr-1.5"></i>` : ''}
+                            ${label}
+                        </label>
+                        <button class="visibility-btn" data-field="${field}" title="Toggle Visibility">
+                            <i data-lucide="eye" width="14" height="14"></i>
+                        </button>
+                    </div>
+                    <div class="relative transition-opacity">
+                        <input type="text" id="input-${field}" value="${state.formData[field]}" 
+                            class="w-full bg-slate-800 border border-slate-700 text-gray-100 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-600"
+                            placeholder="${placeholder}">
+                    </div>
+                `;
+
+                // Bind Event
+                const input = group.querySelector('input');
+                input.addEventListener('input', (e) => {
+                    state.formData[field] = e.target.value;
+                    
+                    // Avatar auto-update logic
+                    if (field === 'fullName' && state.formData.avatarUrl.includes('ui-avatars.com')) {
+                        const newAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(e.target.value)}&background=${state.settings.themeColor.replace('#', '')}&color=fff&size=128`;
+                        state.formData.avatarUrl = newAvatar;
+                        document.getElementById('input-avatarUrl').value = newAvatar;
+                    }
+                    render();
+                });
+
+                // Bind Visibility
+                const visBtn = group.querySelector('.visibility-btn');
+                visBtn.addEventListener('click', () => {
+                    state.visibleFields[field] = !state.visibleFields[field];
+                    render();
+                });
+            });
+
+            // Bind Avatar specific inputs
+            const avatarInput = document.getElementById('input-avatarUrl');
+            avatarInput.value = state.formData.avatarUrl;
+            avatarInput.addEventListener('input', (e) => {
+                state.formData.avatarUrl = e.target.value;
+                render();
+            });
+            document.getElementById('btn-reset-avatar').addEventListener('click', () => {
+                const newAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(state.formData.fullName)}&background=${state.settings.themeColor.replace('#', '')}&color=fff&size=128`;
+                state.formData.avatarUrl = newAvatar;
+                avatarInput.value = newAvatar;
+                render();
+            });
+            document.getElementById('btn-toggle-avatar').addEventListener('click', () => {
+                state.visibleFields.avatar = !state.visibleFields.avatar;
+                render();
+            });
+
+            // Bind Cover Letter
+            const clInput = document.getElementById('input-coverLetter');
+            clInput.value = state.coverLetter;
+            clInput.addEventListener('input', (e) => {
+                state.coverLetter = e.target.value;
+                render();
+            });
+
+            // Generate Layout Buttons
+            const layoutContainer = document.getElementById('layout-toggles');
+            layoutOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.textContent = opt.charAt(0).toUpperCase() + opt.slice(1);
+                btn.dataset.layout = opt;
+                btn.addEventListener('click', () => {
+                    state.settings.layout = opt;
+                    render();
+                });
+                layoutContainer.appendChild(btn);
+            });
+
+            // Font Selector
+            document.getElementById('select-font').addEventListener('change', (e) => {
+                state.settings.fontFamily = e.target.value;
+                render();
+            });
+
+            // Size & Shape Toggles (delegation)
+            document.getElementById('font-size-toggles').addEventListener('click', (e) => {
+                if(e.target.tagName === 'BUTTON') {
+                    state.settings.fontSize = e.target.dataset.value;
+                    render();
+                }
+            });
+            document.getElementById('avatar-shape-toggles').addEventListener('click', (e) => {
+                if(e.target.tagName === 'BUTTON') {
+                    state.settings.avatarShape = e.target.dataset.value;
+                    render();
+                }
+            });
+
+            // View Mode Toggles
+            document.getElementById('view-mode-toggles').addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if(btn) {
+                    state.viewMode = btn.dataset.mode;
+                    render();
+                }
+            });
+
+            // Copy Functionality
+            document.getElementById('btn-copy').addEventListener('click', () => {
+                const range = document.createRange();
+                range.selectNode(document.getElementById('preview-render-target'));
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                try {
+                    document.execCommand('copy');
+                    const successBadge = document.getElementById('copy-success');
+                    successBadge.classList.remove('hidden');
+                    successBadge.classList.add('flex');
+                    setTimeout(() => {
+                        successBadge.classList.add('hidden');
+                        successBadge.classList.remove('flex');
+                    }, 2000);
+                } catch (err) {
+                    console.error(err);
+                }
+                window.getSelection().removeAllRanges();
+            });
+
+            // Initial Render
+            render();
+            lucide.createIcons();
+        }
+
+        // Start
+        init();
+
+    </script>
+</body>
+</html>
