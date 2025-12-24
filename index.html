@@ -572,6 +572,9 @@
                 const layout = btn.dataset.layout;
                 if (layout === state.settings.layout) {
                     btn.className = 'px-3 py-2 rounded-lg text-sm font-medium transition-all bg-blue-600 text-white shadow-lg';
+                } else if (layout === 'classic') {
+                    // Highlight Classic Recommended even if not selected
+                    btn.className = 'px-3 py-2 rounded-lg text-sm font-medium transition-all text-blue-400 border border-blue-500/50 hover:bg-blue-500/10 hover:text-white shadow-[0_0_10px_rgba(59,130,246,0.1)]';
                 } else {
                     btn.className = 'px-3 py-2 rounded-lg text-sm font-medium transition-all text-[#e3e3e3]/50 hover:text-white hover:bg-[#1b3c53]';
                 }
@@ -740,7 +743,9 @@
             const layoutContainer = document.getElementById('layout-toggles');
             layoutOptions.forEach(opt => {
                 const btn = document.createElement('button');
-                btn.textContent = opt.charAt(0).toUpperCase() + opt.slice(1);
+                let label = opt.charAt(0).toUpperCase() + opt.slice(1);
+                if (opt === 'classic') label = 'Classic Recommended';
+                btn.textContent = label;
                 btn.dataset.layout = opt;
                 btn.addEventListener('click', () => {
                     state.settings.layout = opt;
